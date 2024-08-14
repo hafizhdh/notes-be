@@ -24,7 +24,26 @@ const findById = async (id: string) => {
   return note
 }
 
+
+const createNote = async (title: string, body: string) => {
+  if (!title || !body) {
+    throw new HttpException(400, "Missing properties")
+  }
+  
+  const note = await prisma.note.create({
+    data: {
+      title,
+      body
+    }
+  }).catch((e) => {
+    throw new HttpException(500, "Error fetching notes")
+  })
+
+  return note
+}
+
 export {
   findMany,
-  findById
+  findById,
+  createNote
 }

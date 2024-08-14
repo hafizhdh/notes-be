@@ -36,14 +36,45 @@ const createNote = async (title: string, body: string) => {
       body
     }
   }).catch((e) => {
-    throw new HttpException(500, "Error fetching notes")
+    throw new HttpException(500, "Error creating notes")
+  })
+  
+  return note
+}
+
+const updateNote = async (id: string, title: string, body: string) => {
+  const note = await prisma.note.findUnique({
+    where: {
+      id: id
+    }
+  })
+  
+  if (!note) {
+    throw new HttpException(404, "Note not found")
+  }
+  
+  if (!title && !body) {
+    throw new HttpException(400, "Missing properties")
+  }
+  
+  const updatedNote = await prisma.note.update({
+    where: {
+      id: id
+    },
+    data: {
+      title: title ? title : note.title,
+      body: body ? body : note.body
+    }
+  }).catch((e) => {
+    throw new HttpException(500, "Error creating notes")
   })
 
-  return note
+  return updatedNote
 }
 
 export {
   findMany,
   findById,
-  createNote
+  createNote,
+  updateNote
 }

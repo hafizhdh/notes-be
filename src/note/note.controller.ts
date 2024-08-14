@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { createNote, findById, findMany } from "./note.service";
+import { createNote, findById, findMany, updateNote } from "./note.service";
 import HttpException from "../model/http-exception.model";
 
 const router = Router()
@@ -39,7 +39,7 @@ router.get('/note/:id', async (req: Request, res: Response) => {
 })
 
 /**
- * POST /api/v1
+ * POST /api/v1/note
 */
 router.post('/note', async (req: Request, res: Response) => {
   try {
@@ -49,6 +49,33 @@ router.post('/note', async (req: Request, res: Response) => {
     }
     const { title, body } = requestBody
     const note = await createNote(title, body)
+    res.json(note)
+  } catch (err: any) {
+    res.status(err.errorCode).json({
+      code: err.errorCode,
+      message: err.message
+    })
+    
+  }
+})
+
+/**
+ * PUT /api/v1/note
+ */
+router.put('/note/:id', async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id
+    if (!id) {
+      throw new HttpException(400, "Please provide an id")
+    }
+
+    const requestBody = req.body
+    if (!requestBody) {
+      throw new HttpException(400, "Request body cannot be empty");
+    }
+
+    const { title, body } = requestBody
+    const note = await updateNote(id, title, body)
     res.json(note)
   } catch (err: any) {
     res.status(err.errorCode).json({

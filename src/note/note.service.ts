@@ -18,7 +18,7 @@ const findById = async (id: string) => {
     if (e.code === 'P2025') {
       throw new HttpException(404, "Note not found");
     } else {
-      throw new HttpException(500, "Error fetching notes")
+      throw new HttpException(500, "Error fetching note")
     }
   })
   return note
@@ -36,7 +36,7 @@ const createNote = async (title: string, body: string) => {
       body
     }
   }).catch((e) => {
-    throw new HttpException(500, "Error creating notes")
+    throw new HttpException(500, "Error creating note")
   })
   
   return note
@@ -66,15 +66,35 @@ const updateNote = async (id: string, title: string, body: string) => {
       body: body ? body : note.body
     }
   }).catch((e) => {
-    throw new HttpException(500, "Error creating notes")
+    throw new HttpException(500, "Error updating note")
   })
 
   return updatedNote
+}
+
+const deleteNote = async (id: string) => {
+  const note = await prisma.note.findUnique({
+    where: {
+      id: id
+    }
+  })
+  if (!note) {
+    throw new HttpException(404, "Note not found")
+  }
+
+  await prisma.note.delete({
+    where: {
+      id: id
+    }
+  }).catch((e) => {
+    throw new HttpException(500, "Error deleting note")
+  })
 }
 
 export {
   findMany,
   findById,
   createNote,
-  updateNote
+  updateNote,
+  deleteNote
 }

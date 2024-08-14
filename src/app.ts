@@ -1,4 +1,4 @@
-import express from "express"
+import express, { Request, Response, NextFunction } from "express"
 import dotenv from "dotenv"
 import cors from "cors"
 import routes from "./routes"
@@ -14,6 +14,15 @@ app.get("/", (req, res) => {
 })
 
 app.use(routes)
+
+app.use((req, res, next) => {
+  res.status(404).json({ error: 'Endpoint not found' });
+});
+
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong' });
+})
 
 const PORT = process.env.PORT || 8008
 

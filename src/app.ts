@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
+import routes from "./routes"
 
 dotenv.config()
 
@@ -10,6 +11,8 @@ app.use(cors())
 app.get("/", (req, res) => {
   res.status(200).json({"message": "Welcome to notes application backend"})
 })
+
+app.use(routes)
 
 const PORT = process.env.PORT || 8008
 
